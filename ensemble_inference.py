@@ -34,7 +34,7 @@ def create_prompt(example_text, example_label, review_text):
     prompt += f"Output: "
     return prompt
 
-def single_inference(model_num, prompt, tokenizer, model, model_seed, model_temperature, device='cuda'):
+def single_inference(prompt, tokenizer, model, model_seed, model_temperature, model_num=0, device='cuda'):
     torch.manual_seed(model_seed)
     # Tokenization
     inputs  = tokenizer(prompt, return_tensors='pt').to(device)
