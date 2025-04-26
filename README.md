@@ -1,5 +1,6 @@
 # Ensemble Inference for LLMs
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jniimi/ensemble_inference/blob/main/example.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jniimi/ensemble_inference/blob/main/sample.ipynb)
+
 Niimi, J. (2025) "A Simple Ensemble Strategy for LLM Inference: Towards More Stable Text Classification" In Proceedings of the 30th International Conference on Natural Language & Information Systems (NLDB 2025)
 
 ## Overview
@@ -22,7 +23,7 @@ import ensemble_inference as ens
 This approach can be implemented in any LLMs; however, the models with wide pretraining and instruction-tuning are highly recommended. This example adopts `Llama-3-8B-Instruct`.
 
 ### You can refer sample on Google Colab
-[https://colab.research.google.com/github/jniimi/ensemble_inference/blob/main/example.ipynb](https://colab.research.google.com/github/jniimi/ensemble_inference/blob/main/example.ipynb)
+[https://colab.research.google.com/github/jniimi/ensemble_inference/blob/main/sample.ipynb](https://colab.research.google.com/github/jniimi/ensemble_inference/blob/main/sample.ipynb)
 
 ## Reference
 ```

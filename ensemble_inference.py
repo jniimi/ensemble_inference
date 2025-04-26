@@ -12,7 +12,7 @@ def load_model(model_id='meta-llama/Meta-Llama-3-8B-Instruct', load_in_4bit=True
         if not torch.cuda.is_available():
             raise ValueError('Quantization with BitsAndBytes requires CUDA.')
         from transformers import BitsAndBytesConfig
-        bnb_config = BitsAndBytesConfig(load_in_4bit=True)
+        bnb_config = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16)
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id, quantization_config=bnb_config, device_map='auto')
     return model, tokenizer
