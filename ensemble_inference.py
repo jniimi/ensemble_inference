@@ -4,13 +4,13 @@ import pandas as pd
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 import torch
-if not torch.cuda.is_available():
-    raise ValueError('Quantization with BitsAndBytes requires CUDA.')
 device = torch.device("cuda")
 
 def load_model(model_id='meta-llama/Meta-Llama-3-8B-Instruct', load_in_4bit=True):
     bnb_config = None
     if load_in_4bit:
+        if not torch.cuda.is_available():
+            raise ValueError('Quantization with BitsAndBytes requires CUDA.')
         from transformers import BitsAndBytesConfig
         bnb_config = BitsAndBytesConfig(load_in_4bit=True)
     tokenizer = AutoTokenizer.from_pretrained(model_id)
@@ -34,10 +34,11 @@ def create_prompt(example_text, example_label, review_text):
     prompt += f"Output: "
     return prompt
 
-def single_inference(prompt, label, tokenizer, model, model_seed, model_temperature, device):
+def single_inference(model_num, prompt, tokenizer, model, model_seed, model_temperature, device='cuda'):
     torch.manual_seed(model_seed)
     # Tokenization
     inputs  = tokenizer(prompt, return_tensors='pt').to(device)
+    model = model.to(device)
 
     # Inference
     time1 = time.time()
@@ -48,11 +49,35 @@ def single_inference(prompt, label, tokenizer, model, model_seed, model_temperat
             do_sample=True,
             temperature=model_temperature,
             return_dict_in_generate=True,
-            output_scores=True,
             pad_token_id=tokenizer.eos_token_id
             )
     time2 = time.time()
-    pred = tokenizer.decode(outputs.sequences[0], skip_special_tokens=True)
-    logits = outputs.scores[0].softmax(dim=-1)
+    pred = tokenizer.decode(outputs.sequences[0], skip_special_tokens=True)[-1]
+    try:
+        pred = int(pred)
+    except:
+        pass
+    result = {
+        f'time{model_num}': time2-time1,
+        f'pred{model_num}': pred
+    }
+    return result
 
-    #top_probs, top_indices = torch.topk(logits, k=5, dim=-1)
+def ensemble_inference(prompt, tokenizer, model, model_seeds, model_temperature, device):
+    num_models = len(model_seeds)
+    result = {}
+    for model_num, model_seed in enumerate(model_seeds):
+        r = single_inference(
+            model_num=model_num, 
+            prompt=prompt, 
+            tokenizer=tokenizer, 
+            model=model, 
+            model_seed=model_seed, 
+            model_temperature=model_temperature, 
+            device=device
+            )
+        result = result|r
+    res = pd.DataFrame(result, index=[0])
+    res['total_time'] = res.filter(like='time').sum(axis=1)
+    res['pred'] = res.filter(like='pred').median(axis=1).astype(int)
+    return res
