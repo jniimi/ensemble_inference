@@ -32,7 +32,7 @@ This approach can be implemented in any LLMs; however, the models with wide pret
   author = {Junichiro Niimi},
   title = {A Simple Ensemble Strategy for LLM Inference: Towards More Stable Text Classification},
   booktitle = {Proceedings of the 30th International Conference on Natural Language & Information Systems (NLDB 2025)},
-  doi = {10.48550/arXiv.2504.18884},
+  doi = {10.1007/978-3-031-97144-0_17},
   year = {2025},
   publisher = {Springer}
 }
